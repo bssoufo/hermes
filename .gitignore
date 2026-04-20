@@ -1,0 +1,6 @@
+.env
+.env.local
+storage/
+!storage/hermes/.gitkeep
+.DS_Store
+*.log
