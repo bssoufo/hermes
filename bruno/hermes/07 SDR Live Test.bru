@@ -1,0 +1,66 @@
+meta {
+  name: 07 SDR Live Test
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/v1/chat/completions
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{apiKey}}
+}
+
+body:json {
+  {
+    "model": "hermes-agent",
+    "messages": [
+      {
+        "role": "user",
+        "content": "STEP 1: Call skill_view('sdr') to load the full sdr skill.\n\nSTEP 2: Apply it to this scenario in LIVE mode (not shadow):\n- contactId={{testContactId}}\n- form topic: 'booking a demo for marketing agency services'\n- agent_name (your persona): Alex\n- brand: TestBrand Marketing\n- mode: live\n\nSTEP 3: Follow the skill's full Procedure. This means you WILL actually send an SMS through conversations_send-a-new-message if the compliance gate passes. Emit the 7-block output shape documented in the skill, with block 6 (Next action) reporting what you ACTUALLY did (not what you would do), and block 7 (Verdict) saying 'Sent' or 'Not sent because <reason>'.\n\nHard constraints (non-negotiable):\n- SMS must be <= 160 chars, ASCII only, contain the exact phrase 'Alex here, TestBrand Marketing's AI assistant'\n- Use 'Hi there' if first_name is a placeholder ('guest', 'visitor', etc.)\n- If the compliance gate fails (quiet hours, STOP, frequency cap, already booked): do NOT send; emit verdict 'Not sent because <reason>'\n- If the contact has tag 'ai-paused', 'opted-out', or 'do-not-contact': do NOT send\n- Print the exact SMS text you sent (or would-have-sent if compliance blocked)\n- Print the full GHL response from conversations_send-a-new-message including any messageId or error"
+      }
+    ]
+  }
+}
+
+docs {
+  LIVE mode end-to-end test. This WILL send a real SMS.
+
+  PREREQUISITES before running:
+  1. The GHL sub-account must have SMS configured (Twilio phone number
+     provisioned + A2P 10DLC registration if US, or Canadian SMS if CA).
+     Test it manually first: send a test SMS from GHL UI to your phone.
+     If that works, this will work.
+  2. Set the `testContactId` env var to the ID of a GHL contact whose
+     phone field is a number YOU can receive SMS on. Safest option:
+     create a fresh contact in GHL with your own phone.
+  3. Confirm the contact has no `ai-paused` / `opted-out` tag (otherwise
+     the skill will correctly refuse to send -- good test of the guard,
+     but not a successful live test).
+  4. Your local time must be within 8 AM - 9 PM in the phone's timezone
+     (TCPA compliance gate).
+
+  WHAT HAPPENS:
+  - Hermes fetches the contact via ghl MCP
+  - Runs compliance gate
+  - Drafts the SMS per the skill
+  - Calls conversations_send-a-new-message via MCP (REAL outbound!)
+  - GHL hands off to Twilio / carrier
+  - Your phone receives the SMS within 10-60 seconds
+
+  COST: one SMS segment (~$0.0075 via Twilio through GHL, typically).
+
+  CLEANUP: after the test, go to GHL -> Conversations -> find the
+  thread -> you'll see the message logged. The contact's updatedAt will
+  reflect the touch.
+
+  WARNING: setting `testContactId` to a contact you do NOT own means
+  you'd send a real cold SMS to someone else. Don't do that in testing.
+}

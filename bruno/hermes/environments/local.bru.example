@@ -1,6 +1,9 @@
 vars {
   baseUrl: http://127.0.0.1:8642
+  testContactId: REPLACE_WITH_YOUR_GHL_CONTACT_ID
 }
 vars:secret [
   apiKey
+  ghlPitToken
+  ghlLocationId
 ]
