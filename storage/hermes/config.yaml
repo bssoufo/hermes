@@ -27,3 +27,49 @@ mcp_servers:
     tools:
       resources: false
       prompts: false
+
+# -- Inbound webhook routes --------------------------------------------
+# Exposes HTTP endpoints on port 8644 that transform incoming payloads
+# into agent prompts. Used here to receive GHL InboundMessage events
+# and fire the sdr skill to respond automatically.
+platforms:
+  webhook:
+    enabled: true
+    extra:
+      port: 8644
+      rate_limit: 30
+      max_body_bytes: 1048576
+      routes:
+        ghl-inbound:
+          # Shared secret with GHL. Set GHL_WEBHOOK_SECRET in env.
+          # GHL's "Custom Webhook" action must send header:
+          #   X-Webhook-Signature: <HMAC-SHA256 of raw body using this secret>
+          # If GHL's UI does not support outbound HMAC signing, replace
+          # this value with "INSECURE_NO_AUTH" temporarily (not for prod).
+          secret: "${GHL_WEBHOOK_SECRET}"
+          # Agent prompt: maps GHL payload fields into an SDR activation.
+          # GHL InboundMessage payload fields referenced:
+          #   type, locationId, contactId, conversationId,
+          #   messageType (SMS/Email/Call), direction (inbound/outbound), body
+          prompt: |
+            A GoHighLevel inbound event arrived.
+
+            Event type: {type}
+            Location ID: {locationId}
+            Contact ID: {contactId}
+            Conversation ID: {conversationId}
+            Message type: {messageType}
+            Direction: {direction}
+            Inbound message body: {body}
+
+            Use the sdr skill in LIVE mode (agent_name=Alex,
+            brand=TestBrand Marketing) to decide how to respond.
+            Follow the skill's compliance gate and objection handling.
+            You MUST call skill_view('sdr') first to load the procedure.
+
+            Full raw payload for reference:
+            {__raw__}
+          skills: [sdr]
+          # No `deliver:` block: the SDR skill itself calls
+          # conversations_send-a-new-message via the ghl MCP to reply.
+          # Hermes's webhook response is just the synchronous ack.

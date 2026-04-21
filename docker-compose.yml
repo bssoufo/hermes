@@ -16,6 +16,11 @@ services:
       # Elestio convention: bind to docker0 bridge; host nginx-auto-ssl
       # reverse-proxies this with Let's Encrypt. Never bind 0.0.0.0 here.
       - "172.17.0.1:8642:8642"
+      # Webhook adapter for inbound events (GHL workflows, etc.). Exposed
+      # on a separate port so the authenticated OpenAI API (8642) and the
+      # HMAC-protected webhook endpoint (8644) can be reverse-proxied to
+      # different public hostnames or paths by Elestio.
+      - "172.17.0.1:8644:8644"
     volumes:
       # Named volume = Docker-managed permissions (the container user 'hermes'
       # owns it automatically). Elestio-safe: bind-mounting the repo clone
