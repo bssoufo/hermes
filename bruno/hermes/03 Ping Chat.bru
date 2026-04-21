@@ -1,0 +1,32 @@
+meta {
+  name: 03 Ping Chat
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/v1/chat/completions
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{apiKey}}
+}
+
+body:json {
+  {
+    "model": "hermes-agent",
+    "messages": [
+      { "role": "user", "content": "Reply with the single word 'pong' and nothing else." }
+    ]
+  }
+}
+
+docs {
+  Minimal round-trip through the LLM provider to confirm the chat path works end-to-end (gateway -> provider -> response). If this returns `pong`, the HERMES_INFERENCE_PROVIDER / OPENROUTER_API_KEY / HERMES_DEFAULT_MODEL chain is healthy.
+}

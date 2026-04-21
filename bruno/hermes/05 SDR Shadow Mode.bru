@@ -1,0 +1,45 @@
+meta {
+  name: 05 SDR Shadow Mode
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/v1/chat/completions
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{apiKey}}
+}
+
+body:json {
+  {
+    "model": "hermes-agent",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Activate the sdr skill in SHADOW MODE. A new GHL contact just came in. Details: contactId=bcois, phone=+14182640300, firstName=guest, lastName=visitor bcois. The form topic was 'booking demo for marketing agency services'. DO NOT send any SMS. DO NOT call conversations_send-a-new-message. Instead: (1) fetch the contact via ghl MCP to confirm details, (2) decide what opener you would send per the SDR skill procedure, (3) print the exact SMS text you would send in a code block, (4) list which FIT-3 fields (Intent, Timing, Authority) you still need to qualify, (5) log every ghl MCP tool call you made. Follow the sdr skill's compliance rules (quiet hours, STOP disclaimer on first message, AI disclosure)."
+      }
+    ]
+  }
+}
+
+docs {
+  End-to-end shadow test of the SDR skill:
+  - Hermes reads the sdr skill from /opt/data/skills/sdr/SKILL.md
+  - LLM follows the procedure
+  - MCP tools get called to fetch real contact data
+  - Model drafts the SMS opener per the FIT-3 + disclosure rules
+  - No SMS actually sent (shadow mode)
+
+  Use this to iterate on SKILL.md wording without burning SMS credit.
+  Review the response for: AI disclosure, STOP disclaimer on first message, short opener (<160 chars), FIT-3 next-step clarity, explicit mention of which MCP tools it called.
+
+  Increase the request timeout in Bruno -> Settings to 120s (this request runs a multi-turn tool-use loop).
+}

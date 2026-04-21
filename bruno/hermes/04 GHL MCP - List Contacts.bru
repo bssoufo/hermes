@@ -1,0 +1,40 @@
+meta {
+  name: 04 GHL MCP - List Contacts
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/v1/chat/completions
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{apiKey}}
+}
+
+body:json {
+  {
+    "model": "hermes-agent",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Use the ghl MCP to fetch my first 3 contacts. For each one show first name, last name, phone number, and any tags. If any MCP call fails, report the exact error message verbatim."
+      }
+    ]
+  }
+}
+
+docs {
+  Validates the full MCP pipeline: Hermes -> GHL MCP (streamable HTTP) -> authenticated PIT call -> real contact data.
+
+  Expected: a short assistant message listing 3 contacts with real IDs and phone numbers from your GHL sub-account.
+
+  If you see "Method not found" -> check the `tools.resources: false / prompts: false` flags in config.yaml.
+  If you see "does not have access to this location" -> set `GHL_LOCATION_ID` env var.
+}

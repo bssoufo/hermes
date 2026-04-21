@@ -8,3 +8,9 @@ storage/hermes/skills/*
 !storage/hermes/skills/sdr/
 .DS_Store
 *.log
+
+# Bruno — commit the collection + request files, but NOT the environment
+# files that hold real secrets (apiKey, ghlPitToken, etc.).
+# Commit only the .example templates.
+bruno/hermes/environments/*.bru
+!bruno/hermes/environments/*.bru.example

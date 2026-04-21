@@ -1,0 +1,6 @@
+vars {
+  baseUrl: https://hermes-u19609.vm.elestio.app
+}
+vars:secret [
+  apiKey
+]

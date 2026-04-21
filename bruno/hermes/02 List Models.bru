@@ -1,0 +1,19 @@
+meta {
+  name: 02 List Models
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/v1/models
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{apiKey}}
+}
+
+docs {
+  Lists the OpenAI-compatible models exposed by the gateway. Currently Hermes exposes a single meta-model `hermes-agent` that routes internally to the configured backend (OpenRouter, Anthropic, etc.).
+}

@@ -1,0 +1,44 @@
+meta {
+  name: 06 GHL MCP direct (bypass Hermes)
+  type: http
+  seq: 6
+}
+
+post {
+  url: https://services.leadconnectorhq.com/mcp/
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json, text/event-stream
+  locationId: {{ghlLocationId}}
+}
+
+auth:bearer {
+  token: {{ghlPitToken}}
+}
+
+body:json {
+  {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "initialize",
+    "params": {
+      "protocolVersion": "2025-03-26",
+      "capabilities": {},
+      "clientInfo": { "name": "bruno", "version": "1.0.0" }
+    }
+  }
+}
+
+docs {
+  Raw MCP handshake directly against GHL's server (no Hermes). Use this when MCP troubleshooting to isolate whether an issue is on the GHL side or the Hermes side.
+
+  Expected response (SSE format, 200 OK):
+  event: message
+  data: {"result":{"protocolVersion":"2025-03-26","capabilities":{"tools":{}},"serverInfo":{"name":"ghl-mcp","version":"1.0.0"}},"jsonrpc":"2.0","id":1}
+
+  Requires two env secrets: ghlPitToken and ghlLocationId. Add them alongside apiKey in your environment.
+}

@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "hermes",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
