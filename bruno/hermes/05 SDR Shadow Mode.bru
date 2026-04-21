@@ -24,22 +24,34 @@ body:json {
     "messages": [
       {
         "role": "user",
-        "content": "Activate the sdr skill in SHADOW MODE. A new GHL contact just came in. Details: contactId=bcois, phone=+14182640300, firstName=guest, lastName=visitor bcois. The form topic was 'booking demo for marketing agency services'. DO NOT send any SMS. DO NOT call conversations_send-a-new-message. Instead: (1) fetch the contact via ghl MCP to confirm details, (2) decide what opener you would send per the SDR skill procedure, (3) print the exact SMS text you would send in a code block, (4) list which FIT-3 fields (Intent, Timing, Authority) you still need to qualify, (5) log every ghl MCP tool call you made. Follow the sdr skill's compliance rules (quiet hours, STOP disclaimer on first message, AI disclosure)."
+        "content": "STEP 1: Call skill_view('sdr') NOW to load the full sdr skill procedure. You MUST do this before drafting anything. Do not improvise from general SDR knowledge.\n\nSTEP 2: After loading the skill, apply it to this scenario:\n- A new GHL contact arrived.\n- contactId=bcois, phone=+14182640300, firstName=guest, lastName=visitor bcois\n- form topic: 'booking demo for marketing agency services'\n- agent_name (your persona): Alex\n- brand: TestBrand Marketing\n- mode: shadow (read-only, no writes)\n\nSTEP 3: Produce the EXACT 7-block shadow-mode output shape that the skill defines (Mode / Reads performed / Compliance gate with 4 checkmarks / Draft SMS in a code block with char count suffix / FIT-3 gaps / Next action / Verdict). If your output does not match that shape verbatim, the skill considers it a failure.\n\nThe SMS MUST be: ASCII-only, <= 160 chars total, use 'Hi there' (first_name 'guest' is placeholder per skill fallback rule), and contain the exact phrase 'Alex here, TestBrand Marketing's AI assistant'. Count the chars and print the count at the end of the code block like '// 147 chars'."
       }
     ]
   }
 }
 
 docs {
-  End-to-end shadow test of the SDR skill:
-  - Hermes reads the sdr skill from /opt/data/skills/sdr/SKILL.md
-  - LLM follows the procedure
-  - MCP tools get called to fetch real contact data
-  - Model drafts the SMS opener per the FIT-3 + disclosure rules
-  - No SMS actually sent (shadow mode)
+  End-to-end shadow test of the SDR skill with EXPLICIT skill loading.
 
-  Use this to iterate on SKILL.md wording without burning SMS credit.
-  Review the response for: AI disclosure, STOP disclaimer on first message, short opener (<160 chars), FIT-3 next-step clarity, explicit mention of which MCP tools it called.
+  Why the explicit skill_view call matters:
+  Hermes's progressive-disclosure model only shows skill titles + one-line
+  descriptions by default. The model must call skill_view('sdr') to actually
+  read the SKILL.md body. Without that, the model guesses from general SDR
+  training knowledge and ignores the specific rules (char count, 6-block
+  output, exact AI-disclosure phrase).
 
-  Increase the request timeout in Bruno -> Settings to 120s (this request runs a multi-turn tool-use loop).
+  Agent name + brand are injected in the prompt (Alex / TestBrand Marketing)
+  so the model has no excuse for [Your Name] placeholders.
+
+  Review the response for all 7 blocks literally:
+  1. Mode line
+  2. Reads performed list (read tools only)
+  3. Compliance gate with 4 checks
+  4. Draft SMS (<=160 ASCII chars, char count suffix, contains exact
+     disclosure phrase)
+  5. FIT-3 gaps (Intent/Timing/Authority)
+  6. Next action (the one write tool that would fire in LIVE mode)
+  7. Verdict line
+
+  Increase Bruno request timeout to 120s (multi-turn tool-use).
 }
