@@ -4,6 +4,7 @@
 # Differences from the Elestio-ready base:
 #   - Ports bind to 127.0.0.1 (not 172.17.0.1, which only exists on Linux docker hosts)
 #   - Loads .env.local in addition to .env so you can override per-machine values
+#   - Hermes ports also exposed directly for debug bypass of nginx
 #   - Dashboard reachable directly on http://127.0.0.1:9119
 
 services:
@@ -11,14 +12,20 @@ services:
     env_file:
       - .env
       - .env.local
-    ports: !override
+    # Expose Hermes ports directly to localhost for debug (nginx is still
+    # the primary entry point at 127.0.0.1:8080). Bypass lets you hit
+    # 127.0.0.1:8642 to isolate nginx vs Hermes during troubleshooting.
+    ports:
       - "127.0.0.1:8642:8642"
-      # Uncomment when you move to webhook-driven testing (Step 2+):
-      # - "127.0.0.1:8644:8644"
+      - "127.0.0.1:8644:8644"
+
+  nginx:
+    ports: !override
+      - "127.0.0.1:8080:80"
 
   dashboard:
     env_file:
       - .env
       - .env.local
-    ports: !override
+    ports:
       - "127.0.0.1:9119:9119"

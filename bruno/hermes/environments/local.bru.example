@@ -1,5 +1,7 @@
 vars {
-  baseUrl: http://127.0.0.1:8642
+  # Through the nginx sidecar (mirrors Elestio prod routing).
+  baseUrl: http://127.0.0.1:8080
+  # Bypass nginx for debugging: baseUrl: http://127.0.0.1:8642
   testContactId: REPLACE_WITH_YOUR_GHL_CONTACT_ID
 }
 vars:secret [

@@ -1,5 +1,5 @@
 # Hermes Agent on Elestio
-# Reverse proxy target port (set in Elestio dashboard): 8642
+# Reverse proxy target port (set in Elestio dashboard): 8080 (the nginx sidecar)
 services:
   hermes:
     image: nousresearch/hermes-agent:latest
@@ -12,15 +12,10 @@ services:
       API_SERVER_HOST: "0.0.0.0"   # required for non-loopback access
       API_SERVER_PORT: "8642"
       TERMINAL_ENV: "docker"       # sandboxed subagent terminals
-    ports:
-      # Elestio convention: bind to docker0 bridge; host nginx-auto-ssl
-      # reverse-proxies this with Let's Encrypt. Never bind 0.0.0.0 here.
-      - "172.17.0.1:8642:8642"
-      # Webhook adapter for inbound events (GHL workflows, etc.). Exposed
-      # on a separate port so the authenticated OpenAI API (8642) and the
-      # HMAC-protected webhook endpoint (8644) can be reverse-proxied to
-      # different public hostnames or paths by Elestio.
-      - "172.17.0.1:8644:8644"
+    # Hermes is reached only through the nginx sidecar on the internal
+    # docker network (service name "hermes"). No host port binding
+    # required -- reduces attack surface.
+    expose: ["8642", "8644"]
     volumes:
       # Named volume = Docker-managed permissions (the container user 'hermes'
       # owns it automatically). Elestio-safe: bind-mounting the repo clone
@@ -83,6 +78,27 @@ services:
         limits:
           memory: 768M
           cpus: "0.5"
+
+  nginx:
+    image: nginx:alpine
+    container_name: hermes-nginx
+    restart: unless-stopped
+    # Binds docker0 gateway -- Elestio's host nginx-auto-ssl reverse-proxies
+    # this port with Let's Encrypt. Set Elestio "Reverse Proxy Target Port"
+    # to 8080 in the dashboard (one-time config change).
+    ports:
+      - "172.17.0.1:8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      hermes:
+        condition: service_started
+    networks: [hermes-net]
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.2"
 
 volumes:
   hermes-data:
