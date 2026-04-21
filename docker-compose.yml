@@ -1,6 +1,36 @@
 # Hermes Agent on Elestio
 # Reverse proxy target port (set in Elestio dashboard): 8080 (the nginx sidecar)
 services:
+  # Init container: seeds the SDR skill from the repo into the named
+  # volume BEFORE hermes starts. Runs as root so it can create the
+  # target directory and chown to the hermes user (uid baked into the
+  # nousresearch/hermes-agent image). Previous attempt to bind-mount
+  # the repo skill read-only failed hard: Hermes's `skill_manage` tool
+  # atomically rewrites SKILL.md on self-learning, hitting OSError 30
+  # "Read-only file system" and CRASHING the whole gateway with exit 1.
+  # Copying the skill into the writable named volume fixes this. Every
+  # redeploy re-seeds, so the live skill always matches git HEAD.
+  hermes-init:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes-init
+    entrypoint: []
+    user: root
+    command: >
+      sh -c '
+      set -e ;
+      echo "[init] seeding skills/sdr into named volume..." ;
+      mkdir -p /data/skills/sdr ;
+      cp -rf /repo-skills/sdr/. /data/skills/sdr/ ;
+      chown -R hermes:hermes /data/skills ;
+      echo "[init] skills/sdr seeded and owned by hermes:hermes" ;
+      ls -la /data/skills/sdr/
+      '
+    volumes:
+      - hermes-data:/data
+      - ./storage/hermes/skills/sdr:/repo-skills/sdr:ro
+    restart: "no"
+    networks: [hermes-net]
+
   hermes:
     image: nousresearch/hermes-agent:latest
     container_name: hermes
@@ -11,7 +41,7 @@ services:
       API_SERVER_ENABLED: "true"
       API_SERVER_HOST: "0.0.0.0"   # required for non-loopback access
       API_SERVER_PORT: "8642"
-      TERMINAL_ENV: "docker"       # sandboxed subagent terminals
+      TERMINAL_ENV: "local"        # no docker-in-docker needed for SDR use-case
     # Hermes is reached only through the nginx sidecar on the internal
     # docker network (service name "hermes"). No host port binding
     # required -- reduces attack surface.
@@ -23,12 +53,14 @@ services:
       - hermes-data:/opt/data
       # Declarative config is bind-mounted as a single read-only file so the
       # repo's config.yaml still drives MCP servers / skill dirs / etc.
+      # This is safe: Hermes never writes to config.yaml at runtime.
       - ./storage/hermes/config.yaml:/opt/data/config.yaml:ro
-      # Custom skills committed in the repo are mounted read-only alongside
-      # Hermes's 71 bundled skills. Hermes's sync step does not touch this
-      # subdirectory because it's a mount point; our SKILL.md is picked up
-      # on every boot.
-      - ./storage/hermes/skills/sdr:/opt/data/skills/sdr:ro
+      # NOTE: skills/sdr is NOT bind-mounted. Its content is copied into
+      # the named volume by the hermes-init container on every boot, so
+      # Hermes's skill_manage tool can patch it (needs writable fs).
+    depends_on:
+      hermes-init:
+        condition: service_completed_successfully
     shm_size: "1gb"                # Playwright/Chromium needs > 64MB /dev/shm
     healthcheck:
       # Python is guaranteed in the Hermes image; wget/curl are not.
