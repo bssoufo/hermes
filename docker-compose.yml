@@ -85,9 +85,11 @@ services:
     restart: unless-stopped
     # Binds docker0 gateway -- Elestio's host nginx-auto-ssl reverse-proxies
     # this port with Let's Encrypt. Set Elestio "Reverse Proxy Target Port"
-    # to 8080 in the dashboard (one-time config change).
+    # to 8880 in the dashboard (one-time config change).
+    # Port 8080 is typically already allocated by Elestio's own stack on
+    # the VM; 8880 is chosen to avoid that conflict.
     ports:
-      - "172.17.0.1:8080:80"
+      - "172.17.0.1:8880:80"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
