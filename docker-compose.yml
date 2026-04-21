@@ -92,12 +92,16 @@ services:
     env_file: .env
     environment:
       GATEWAY_HEALTH_URL: "http://hermes:8642"
-    # INTERNAL-ONLY: not bound to a host port. Reach via:
-    #   ssh -L 9119:172.17.0.1:9119 root@<elestio-vm>
-    # then open http://localhost:9119 locally.
-    # To make it public, uncomment the ports block and open a SECOND Elestio pipeline.
-    # ports:
-    #   - "172.17.0.1:9119:9119"
+    # Bound on docker0 (172.17.0.1) so an SSH tunnel from the laptop
+    # can reach it. The dashboard SPA hardcodes root-level asset paths
+    # (/assets/*, /api/*) which defeat a /dashboard/ nginx reverse proxy,
+    # so SSH tunnel is the practical access path. Not a public binding:
+    # 172.17.0.1 is only routable from the VM itself.
+    # From your laptop:
+    #   ssh -L 9119:172.17.0.1:9119 root@<elestio-vm-host>
+    # Then open http://localhost:9119 in a browser.
+    ports:
+      - "172.17.0.1:9119:9119"
     expose: ["9119"]
     volumes:
       # Shared named volume; read-only to prevent two-writers corruption.
