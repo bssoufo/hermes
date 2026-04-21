@@ -88,13 +88,27 @@ services:
   # they show up in `docker compose logs` and in Elestio's dashboard
   # logs UI alongside the gateway/dashboard/nginx output. Read-only
   # mount -- Hermes still owns the files.
+  #
+  # The named volume `hermes-data` holds everything Hermes keeps under
+  # /opt/data (config, sessions, memories, logs, ...). Mounting it at
+  # /data in this sidecar means the log files are at /data/logs/*.log.
+  # Wait until they exist before tailing -- Hermes creates agent.log
+  # on first log write, which can lag boot by a few seconds.
   log-tailer:
     image: alpine:latest
     container_name: hermes-log-tail
     restart: unless-stopped
-    command: sh -c 'tail -n 0 -F /logs/agent.log /logs/errors.log 2>&1'
+    command: >
+      sh -c '
+      until [ -f /data/logs/agent.log ] && [ -f /data/logs/errors.log ]; do
+        echo "[log-tailer] waiting for hermes log files to be created..." ;
+        sleep 3 ;
+      done ;
+      echo "[log-tailer] log files ready, streaming..." ;
+      tail -n 50 -F /data/logs/agent.log /data/logs/errors.log 2>&1
+      '
     volumes:
-      - hermes-data:/logs:ro
+      - hermes-data:/data:ro
     depends_on:
       hermes:
         condition: service_started
