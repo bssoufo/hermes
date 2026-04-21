@@ -63,6 +63,36 @@ The default only when the caller EXPLICITLY says `mode: live` or the skill
 is triggered by a GHL webhook event (not a curl smoke test). All tools
 (read + write) are available. Follow the full Procedure section below.
 
+**CRITICAL — LIVE mode is EXECUTION, not description.**
+
+- DO call `conversations_send-a-new-message` (and any other write tools)
+  when the procedure reaches that step. Do not merely describe what you
+  would call.
+- DO NOT emit the 7-block structured report that SHADOW mode requires.
+  That format is for dry-run analysis. In LIVE mode your text output is
+  only a brief execution summary for the operator/webhook-caller; the
+  LEAD only sees the SMS you actually send via the MCP tool.
+- If the compliance gate blocks a send, state ONE line with the reason
+  ("Did not send: STOP received 2h ago") and stop. Still no structured
+  report.
+- Phrasing: use the past tense for things you DID ("Sent SMS to +1...,
+  messageId=abc"), not conditional ("Would send..."). If you find
+  yourself writing "would" in LIVE mode, stop -- you are generating a
+  SHADOW report by mistake and missing the real tool call.
+
+Minimal LIVE-mode output example (what the webhook response should look
+like after a successful send):
+
+```
+LIVE: continued active conversation in FR for contact {id}.
+Last inbound: "{body}". Drafted reply: "{sms_text_sent}"
+Compliance: all 4 checks passed.
+Sent via conversations_send-a-new-message.
+messageId: {returned_message_id}
+```
+
+That's all. No 7-block format.
+
 ## When to Use
 
 Activate this skill when ANY of the following is true:
