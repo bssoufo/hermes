@@ -113,9 +113,26 @@ Target: book the call with 2-4 messages total. Longer threads = drop-off.
 
 ### 1. Resolve context (silent)
 
-- Call `ghl.contacts_get-contact` with the `contactId`.
-- Call `ghl.conversations_search-conversation` to find the contact's thread,
-  then `ghl.conversations_get-messages` to read the last 20 messages.
+Contact resolution policy -- pick ONE path, never both:
+
+- **If `contactId` is given** (normal case -- GHL webhooks always include it):
+  call `ghl.contacts_get-contact(id)` exactly once.
+  - On 200: proceed.
+  - On 404: the contact was deleted between webhook fire and this run.
+    **Exit.** Do NOT fall back to phone search and do NOT upsert a
+    replacement -- that would create a ghost record.
+- **If only `phone` or `email` is given** (manual operator trigger, no ID):
+  call `ghl.contacts_get-contacts(query=<phone_or_email>)` and pick the
+  single most recently updated match. If 0 matches or >1 ambiguous
+  matches: STOP and ask the user which contact they mean.
+- **Never search by phone when you already have an ID.** The ID is always
+  authoritative -- a phone search can return duplicates (same number
+  attached to two leads is common in B2B).
+
+Then:
+
+- Call `ghl.conversations_search-conversation(contactId)` to find the
+  thread, then `conversations_get-messages` to read the last 20 messages.
 - Inspect tags. If `ai-paused`, `opted-out`, or `do-not-contact`: exit
   immediately. Do not send anything.
 
