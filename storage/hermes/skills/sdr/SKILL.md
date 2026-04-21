@@ -140,12 +140,24 @@ Then:
 
 Before EVERY outbound SMS, verify ALL of:
 
-- [ ] Contact's local hour is in [8 AM, 9 PM] (use area code to infer tz)
-- [ ] Contact has not replied STOP / UNSUBSCRIBE / CANCEL / END / QUIT
-- [ ] You have not already sent more than 1 message in the last 24h
-- [ ] Total outbound in the last 7 days is under 3 (for unresponsive leads)
+- [ ] **Quiet hours**: contact's local hour is in [8 AM, 9 PM] (use area
+      code to infer tz).
+- [ ] **STOP keyword**: contact has not replied STOP / UNSUBSCRIBE /
+      CANCEL / END / QUIT / "remove me" / "take me off your list".
+- [ ] **No double-send**: the most recent message in the conversation
+      thread is an INBOUND from the lead (not an OUTBOUND from us).
+      If our message is still the latest, the lead has not replied yet
+      -- do not stack a second outbound on top. This replaces the old
+      "1 message per 24h" rule, which incorrectly blocked active
+      back-and-forth conversations.
+- [ ] **Cold-lead spam guard**: if the lead has NOT sent ANY inbound in
+      the last 24h, total outbound in the last 7 days must be < 3.
+      This guard does NOT apply when there is a recent inbound -- an
+      active conversation is always allowed to continue within quiet
+      hours.
 
-If ANY check fails: do not send. Log the decision and exit.
+If ANY check fails: do not send. Emit the compliance verdict in the
+output shape and exit gracefully (no error, the agent stays idle).
 
 ### 3. Opening message (only if this is the first outbound)
 
