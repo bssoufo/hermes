@@ -51,7 +51,12 @@ services:
     image: nousresearch/hermes-agent:latest
     container_name: hermes-dashboard
     restart: unless-stopped
-    command: dashboard --host 0.0.0.0
+    # --insecure is required since we bind to 0.0.0.0 so the nginx sidecar
+    # on the internal docker network can reach it. The dashboard is NOT
+    # exposed publicly (no ports mapping, no nginx route yet), so the
+    # "untrusted networks" warning doesn't apply -- it only sees the
+    # hermes-net bridge.
+    command: dashboard --host 0.0.0.0 --insecure
     env_file: .env
     environment:
       GATEWAY_HEALTH_URL: "http://hermes:8642"
@@ -78,6 +83,27 @@ services:
         limits:
           memory: 768M
           cpus: "0.5"
+
+  # Tails Hermes's file-based logs (/opt/data/logs/*.log) to stdout so
+  # they show up in `docker compose logs` and in Elestio's dashboard
+  # logs UI alongside the gateway/dashboard/nginx output. Read-only
+  # mount -- Hermes still owns the files.
+  log-tailer:
+    image: alpine:latest
+    container_name: hermes-log-tail
+    restart: unless-stopped
+    command: sh -c 'tail -n 0 -F /logs/agent.log /logs/errors.log 2>&1'
+    volumes:
+      - hermes-data:/logs:ro
+    depends_on:
+      hermes:
+        condition: service_started
+    networks: [hermes-net]
+    deploy:
+      resources:
+        limits:
+          memory: 32M
+          cpus: "0.1"
 
   nginx:
     image: nginx:alpine
