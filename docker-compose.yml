@@ -26,11 +26,12 @@ services:
       - ./storage/hermes/config.yaml:/opt/data/config.yaml:ro
     shm_size: "1gb"                # Playwright/Chromium needs > 64MB /dev/shm
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8642/health || exit 1"]
+      # Python is guaranteed in the Hermes image; wget/curl are not.
+      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8642/health', timeout=5).status==200 else 1)"]
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 60s
+      start_period: 90s
     networks: [hermes-net]
     deploy:
       resources:
@@ -62,7 +63,10 @@ services:
     shm_size: "256m"
     depends_on:
       hermes:
-        condition: service_healthy
+        # service_started (not service_healthy) so the dashboard and the
+        # Elestio deploy don't fail if the healthcheck is slow/flaky. The
+        # dashboard tolerates a cold gateway; it retries on its own.
+        condition: service_started
     networks: [hermes-net]
     deploy:
       resources:
