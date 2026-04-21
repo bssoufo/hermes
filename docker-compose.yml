@@ -17,7 +17,13 @@ services:
       # reverse-proxies this with Let's Encrypt. Never bind 0.0.0.0 here.
       - "172.17.0.1:8642:8642"
     volumes:
-      - ./storage/hermes:/opt/data
+      # Named volume = Docker-managed permissions (the container user 'hermes'
+      # owns it automatically). Elestio-safe: bind-mounting the repo clone
+      # fails because Elestio clones as root.
+      - hermes-data:/opt/data
+      # Declarative config is bind-mounted as a single read-only file so the
+      # repo's config.yaml still drives MCP servers / skill dirs / etc.
+      - ./storage/hermes/config.yaml:/opt/data/config.yaml:ro
     shm_size: "1gb"                # Playwright/Chromium needs > 64MB /dev/shm
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8642/health || exit 1"]
@@ -51,7 +57,8 @@ services:
     #   - "172.17.0.1:9119:9119"
     expose: ["9119"]
     volumes:
-      - ./storage/hermes:/opt/data:ro   # read-only -- never two writers on same data dir
+      # Shared named volume; read-only to prevent two-writers corruption.
+      - hermes-data:/opt/data:ro
     shm_size: "256m"
     depends_on:
       hermes:
@@ -62,6 +69,9 @@ services:
         limits:
           memory: 768M
           cpus: "0.5"
+
+volumes:
+  hermes-data:
 
 networks:
   hermes-net:
