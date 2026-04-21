@@ -51,7 +51,7 @@ services:
     #   - "172.17.0.1:9119:9119"
     expose: ["9119"]
     volumes:
-      - ./storage/hermes:/opt/data:ro   # read-only — never two writers on same data dir
+      - ./storage/hermes:/opt/data:ro   # read-only -- never two writers on same data dir
     shm_size: "256m"
     depends_on:
       hermes:

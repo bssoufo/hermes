@@ -1,6 +1,7 @@
 .env
 .env.local
-storage/
+storage/hermes/*
 !storage/hermes/.gitkeep
+!storage/hermes/config.yaml
 .DS_Store
 *.log

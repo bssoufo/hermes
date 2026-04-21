@@ -1,0 +1,24 @@
+# Local-only override for smoke testing on a dev machine.
+# Use with: docker compose -f docker-compose.yml -f docker-compose.local.yml up -d
+#
+# Differences from the Elestio-ready base:
+#   - Ports bind to 127.0.0.1 (not 172.17.0.1, which only exists on Linux docker hosts)
+#   - Loads .env.local in addition to .env so you can override per-machine values
+#   - Dashboard reachable directly on http://127.0.0.1:9119
+
+services:
+  hermes:
+    env_file:
+      - .env
+      - .env.local
+    ports: !override
+      - "127.0.0.1:8642:8642"
+      # Uncomment when you move to webhook-driven testing (Step 2+):
+      # - "127.0.0.1:8644:8644"
+
+  dashboard:
+    env_file:
+      - .env
+      - .env.local
+    ports: !override
+      - "127.0.0.1:9119:9119"

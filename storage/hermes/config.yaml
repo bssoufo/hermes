@@ -1,0 +1,26 @@
+# Hermes Agent -- configuration
+# Secrets (GHL_PIT_TOKEN, OPENAI_API_KEY, API_SERVER_KEY) come from env vars.
+# Commit this file: it contains no secrets, only references.
+
+# -- External MCP servers ----------------------------------------------
+# GoHighLevel official MCP server. Auth via Private Integration Token (PIT)
+# created per sub-account in GHL -> Settings -> Private Integrations.
+# Docs: https://marketplace.gohighlevel.com/docs/other/mcp/index.html
+mcp_servers:
+  ghl:
+    url: https://services.leadconnectorhq.com/mcp/
+    headers:
+      Authorization: "Bearer ${GHL_PIT_TOKEN}"
+    # Optional: restrict to a specific location (sub-account) in the PIT's scope.
+    # locationId: "${GHL_LOCATION_ID}"
+    # Optional: allowlist of tool names -- leave commented to expose all ~36 tools
+    # to the LLM. Tighten later once the SDR skill stabilizes.
+    # tools:
+    #   - contacts_get-contacts
+    #   - contacts_get-contact
+    #   - contacts_add-tags
+    #   - conversations_search-conversation
+    #   - conversations_get-messages
+    #   - conversations_send-a-new-message
+    #   - calendars_get-calendar-events
+    #   - opportunities_search-opportunity
