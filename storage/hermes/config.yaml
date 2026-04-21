@@ -1,6 +1,12 @@
 # Hermes Agent -- configuration
-# Secrets (GHL_PIT_TOKEN, OPENAI_API_KEY, API_SERVER_KEY) come from env vars.
+# Secrets (GHL_PIT_TOKEN, OPENROUTER_API_KEY, API_SERVER_KEY) come from env vars.
 # Commit this file: it contains no secrets, only references.
+
+# -- Default model and provider ----------------------------------------
+# OpenRouter model ID format: <provider>/<model>. Browse: openrouter.ai/models
+# Cheap for dev/smoke: openai/gpt-4o-mini
+# Best tool-use for SDR prod: anthropic/claude-3.5-sonnet
+model: openai/gpt-4o-mini
 
 # -- External MCP servers ----------------------------------------------
 # GoHighLevel official MCP server. Auth via Private Integration Token (PIT)
