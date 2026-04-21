@@ -55,7 +55,11 @@ platforms:
           #   type, locationId, contactId, conversationId,
           #   messageType (SMS/Email/Call), direction (inbound/outbound), body
           prompt: |
-            A GoHighLevel inbound event arrived.
+            mode: live
+
+            A GoHighLevel inbound event arrived via production webhook.
+            This is NOT a test. You WILL send an SMS reply if the skill's
+            compliance gate passes. Do NOT run in shadow mode.
 
             Event type: {type}
             Location ID: {locationId}
@@ -65,10 +69,21 @@ platforms:
             Direction: {direction}
             Inbound message body: {body}
 
-            Use the sdr skill in LIVE mode (agent_name=Alex,
-            brand=TestBrand Marketing) to decide how to respond.
-            Follow the skill's compliance gate and objection handling.
-            You MUST call skill_view('sdr') first to load the procedure.
+            Persona for this tenant:
+              agent_name: Alex
+              brand: TestBrand Marketing
+
+            Required steps (in this order):
+            1. Call skill_view('sdr') to load the procedure.
+            2. Call ghl MCP reads to fetch contact + conversation history.
+            3. Evaluate compliance gate per the skill (quiet hours, STOP,
+               no double-send).
+            4. Detect conversation phase (NEW / QUALIFYING / BOOKING /
+               OBJECTION / CLOSED). Do NOT re-use the opener template if
+               any outbound from us already exists in the thread.
+            5. Match the lead's last-inbound language.
+            6. Call ghl.conversations_send-a-new-message with the drafted
+               reply. This is a LIVE write, not a simulation.
 
             Full raw payload for reference:
             {__raw__}
