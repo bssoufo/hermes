@@ -17,11 +17,13 @@ mcp_servers:
     url: https://services.leadconnectorhq.com/mcp/
     headers:
       Authorization: "Bearer ${GHL_PIT_TOKEN}"
+      # Required when the PIT is broad-scoped (Agency-level) OR the PIT's
+      # allowed-locations list has more than one entry. Without this header
+      # GHL returns 403 "The token does not have access to this location".
+      locationId: "${GHL_LOCATION_ID}"
     # GHL MCP only implements tools (no resources, no prompts). Without
     # these flags, Hermes probes resources/list and prompts/list at boot,
     # GHL returns "Method not found", and Hermes drops the whole server.
     tools:
       resources: false
       prompts: false
-    # Optional: restrict to a specific location (sub-account) in the PIT's scope.
-    # locationId: "${GHL_LOCATION_ID}"
