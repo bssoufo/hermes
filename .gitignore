@@ -3,5 +3,8 @@
 storage/hermes/*
 !storage/hermes/.gitkeep
 !storage/hermes/config.yaml
+!storage/hermes/skills/
+storage/hermes/skills/*
+!storage/hermes/skills/sdr/
 .DS_Store
 *.log

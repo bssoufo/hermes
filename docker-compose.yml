@@ -24,6 +24,11 @@ services:
       # Declarative config is bind-mounted as a single read-only file so the
       # repo's config.yaml still drives MCP servers / skill dirs / etc.
       - ./storage/hermes/config.yaml:/opt/data/config.yaml:ro
+      # Custom skills committed in the repo are mounted read-only alongside
+      # Hermes's 71 bundled skills. Hermes's sync step does not touch this
+      # subdirectory because it's a mount point; our SKILL.md is picked up
+      # on every boot.
+      - ./storage/hermes/skills/sdr:/opt/data/skills/sdr:ro
     shm_size: "1gb"                # Playwright/Chromium needs > 64MB /dev/shm
     healthcheck:
       # Python is guaranteed in the Hermes image; wget/curl are not.
