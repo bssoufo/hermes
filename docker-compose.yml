@@ -164,8 +164,15 @@ services:
       - "172.17.0.1:8880:80"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      # Basic auth file for /dashboard/. apr1-hashed password; safe to
+      # commit since only the hash is stored. Rotate via:
+      #   openssl passwd -apr1 <newpass>
+      # and update nginx/.htpasswd with "<user>:<hash>" then redeploy.
+      - ./nginx/.htpasswd:/etc/nginx/.htpasswd:ro
     depends_on:
       hermes:
+        condition: service_started
+      dashboard:
         condition: service_started
     networks: [hermes-net]
     deploy:
