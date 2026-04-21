@@ -41,12 +41,15 @@ platforms:
       max_body_bytes: 1048576
       routes:
         ghl-inbound:
-          # Shared secret with GHL. Set GHL_WEBHOOK_SECRET in env.
-          # GHL's "Custom Webhook" action must send header:
-          #   X-Webhook-Signature: <HMAC-SHA256 of raw body using this secret>
-          # If GHL's UI does not support outbound HMAC signing, replace
-          # this value with "INSECURE_NO_AUTH" temporarily (not for prod).
-          secret: "${GHL_WEBHOOK_SECRET}"
+          # TEMPORARY: literal "INSECURE_NO_AUTH" disables HMAC verification
+          # so we can wire up the GHL workflow without worrying about
+          # signature formats. Switch back to "${GHL_WEBHOOK_SECRET}" with a
+          # real env-var value once GHL is posting successfully.
+          # SECURITY: this route accepts ANY POST. Acceptable only because
+          # the only write action that can happen is conversations_send-a-new-message
+          # through the ghl MCP, which is gated by compliance rules in the
+          # sdr skill. Do not ship this to a public marketing domain.
+          secret: INSECURE_NO_AUTH
           # Agent prompt: maps GHL payload fields into an SDR activation.
           # GHL InboundMessage payload fields referenced:
           #   type, locationId, contactId, conversationId,
