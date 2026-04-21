@@ -1,0 +1,37 @@
+meta {
+  name: 00 List Custom Skills
+  type: http
+  seq: 0
+}
+
+post {
+  url: {{baseUrl}}/v1/chat/completions
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{apiKey}}
+}
+
+body:json {
+  {
+    "model": "hermes-agent",
+    "messages": [
+      {
+        "role": "user",
+        "content": "List ALL skills available to you. For each custom (non-bundled) skill show: name, one-line description, file path. Specifically confirm whether an `sdr` skill is present. If sdr is NOT present, say exactly why (missing file, parse error, permission denied)."
+      }
+    ]
+  }
+}
+
+docs {
+  Pre-flight check before running the shadow test: confirms Hermes loaded storage/hermes/skills/sdr/SKILL.md from the read-only bind mount.
+
+  Expected response: the model mentions `sdr` alongside Hermes's 71 bundled skills. If it does NOT see sdr, the bind mount isn't taking effect -- the Elestio pipeline needs a fresh Rebuild & Redeploy (not just a restart).
+}
