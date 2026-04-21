@@ -4,9 +4,18 @@
 
 # -- Default model and provider ----------------------------------------
 # OpenRouter model ID format: <provider>/<model>. Browse: openrouter.ai/models
-# Cheap for dev/smoke: openai/gpt-4o-mini
-# Best tool-use for SDR prod: anthropic/claude-3.5-sonnet
-model: openai/gpt-4o-mini
+# Using Claude Sonnet 4.6 for production SDR: best-in-class tool-use +
+# instruction following. gpt-4o-mini (which we used for smoke tests)
+# visibly failed to respect LIVE vs SHADOW mode and skipped the
+# conversations_send-a-new-message call -- the cost of weak instruction
+# following dwarfs the LLM savings.
+#
+# Swap options:
+#   anthropic/claude-sonnet-4-6  <- current, best-in-class tool-use
+#   anthropic/claude-3.5-sonnet  <- previous generation, still strong
+#   openai/gpt-4o                <- OpenAI stack alternative
+#   openai/gpt-4o-mini           <- dev/smoke only, known to fail skill rules
+model: anthropic/claude-sonnet-4-6
 
 # -- External MCP servers ----------------------------------------------
 # GoHighLevel official MCP server. Auth via Private Integration Token (PIT)
