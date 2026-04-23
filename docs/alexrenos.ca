@@ -300,3 +300,195 @@ Si pas de Loom vendredi, rien d'autre n'avance.
 - iubenda (politique confidentialité) : `https://www.iubenda.com/`
 - Framer : `https://www.framer.com/`
 - Plausible Analytics : `https://plausible.io/`
+
+---
+
+## 15. Red-team adversarial findings (23 avril 2026)
+
+Avant de construire, j'ai lancé 4 agents en mode adversarial (démolir, pas défendre). Voici les findings convergents à garder sous les yeux.
+
+### 15.1 Probabilités honnêtes sur le plan actuel
+
+| Milestone | Probabilité réaliste |
+|---|---|
+| 2-3 contrats d'ici 22 mai 2026 (30j) | **8-12%** — en pratique 0-1 |
+| 10 000 $ MRR à 12 mois | **10-20%** |
+| Incident technique majeur dans 6 mois | **85%+** |
+| Churn net année 1 > 60% | **65-75%** |
+| Neutralisation par agence GHL-QC établie en 60j | **35-45%** |
+| Scénario "expected value" le plus probable (~40%) | Plafonnement 5-7 clients nets, 7-9k $/mois, burnout à 14 mois |
+
+### 15.2 Les 3 failles fatales convergentes
+
+1. **Prix 1 290 $/mois incohérent avec segment RBQ.** Référentiel mental : CRM 50-250 $/mois, adjointe 20h = 1 800 $/mois (fait 10 jobs), leads Renoassistance 1 500-3 000 $/mois. Verdict : *"pour ce prix je paye une adjointe de plus"*. **Prix crédible : 390-490 $/mois + 990 $ setup.**
+
+2. **Crédibilité fondateur = 0 en rénovation.** Dev techno sans chantier, sans RBQ dans le réseau, sans 1 case study. Close rate réel : **2-5%, pas 20%**. Solution : **signer 3 betas à 0 $** contre droit de case study vidéo AVANT de facturer.
+
+3. **Solo + mission-critical à 1 290 $/mois = incompatible structurel.** Pas d'astreinte, art. 2125 CcQ = engagement 6 mois non opposable au consommateur, outage weekend = churn silencieux certain.
+
+### 15.3 Non-négociables AVANT le 1er client payant
+
+- **Incorporation** (fédéral ~200 $ / QC ~367 $) + **E&O tech** ~2 500 $/an (Intact, Northbridge, Chubb). Sans ça, une poursuite CAI/LPC = faillite perso.
+- **Hard cap tokens/client/jour** (5 $/jour) + **health checks externes** (Better Stack ~30 $/mois) + **backups horaires**. Un runaway nocturne = 500-2 000 $ brûlés.
+- **EFVP Loi 25** documentée + politique confidentialité mentionnant Anthropic US + Hetzner EU + **double opt-in SMS documenté par le rénovateur**.
+- **Règles Alex : JAMAIS chiffrer de prix, JAMAIS se présenter comme humain** (violation AUP Anthropic + art. 219 LPC).
+
+### 15.4 Les 3 pivots stratégiques par EV décroissant
+
+| Pivot | Intuition | EV |
+|---|---|---|
+| **B. B2B2B via agences marketing construction QC** | Vendre en white-label aux agences qui servent déjà 40+ rénos. 1 contact = 15-40 clients indirects. Élimine crédibilité + cycle vente + support. Commission 30-40%. | **Meilleur EV pour un solo.** |
+| **A. Service managé 6 mois avant produit** | Facturer 2 500-4 000 $/mois service managé à 2-3 rénos, passer 40h sur chantiers, puis productiser mois 7-9. | Bon mais lent. |
+| **C. Partenariat Renoassistance exclusif** | Approcher Renoassistance pour devenir intégration officielle "AI SDR". | Proba faible, upside énorme (seul moat incopiable). |
+
+### 15.5 Test de validation avant toute construction
+
+**15 discovery calls rénovateurs SANS VENDRE** — écouter pain points réels, budget, rapport à la techno.
+- Si 8-10/15 disent *"speed-to-lead c'est pas mon problème"* → hypothèse fausse → pivoter
+- Si 6-9/15 confirment → builder à 490 $/mois
+- Si 10+/15 *"je paierais cher"* → builder à 990 $/mois mais valider prix
+
+---
+
+## 16. Pivot B — Agences marketing QC qui servent des rénovateurs (recherche 23 avril 2026)
+
+**17 agences QC vérifiées** (pas 20 — honnêteté > gonflage).
+
+### 16.1 Tier A (best fit, priorité 1 — 11 agences)
+
+| # | Agence | URL | Ville | Spécialité | Preuve clients rénos |
+|---|---|---|---|---|---|
+| 1 | **Webici** | webici.ca | Québec | Site + SEO + Ads + CRM IA (Plannit) | Concept Rénovation Prestige (3× revenus 6 mois), Prospair, Arsenal Électrique, Marvric |
+| 2 | **Web Booster 360** | webbooster360.ca | Montréal | Sites + SEO + Google Ads + vidéo drone | 300+ entrepreneurs, Plancher Nouveau Monde, Drain Québec, Construction SL Ménard |
+| 3 | **BOLÉAN** | bolean.com | St-Sauveur | Agence 100% construction | Garaga, Azur Plomberie, Est-Ouest Construction + 30 logos |
+| 4 | **PH+C Digital** (Groupe PH) | phcdigital.ca | Chambly / MTL | SEO + Google Ads 100% construction | Parquet Deluxe, Ébénisterie GMRS, Castco, GeoFix, Tremblay Grues |
+| 5 | **Bofu** | bofu.ca | Laurentides | Google + Meta Ads + SEO construction | Page dédiée marketing construction, forfaits 1 500 $/mois |
+| 6 | **Delisoft** | delisoft.ca | Longueuil | Google Ads + SEO, 200+ clients construction | Toitures Distinction, +80% revenus <12 mois |
+| 7 | **Bridge Media** | bridgemedia.ca | Mascouche / TR / Lévis | Web + Ads + SEO construction résidentielle | Partenariat AEMQ, 789 leads en 5 mois |
+| 8 | **Agence Émérite** | emerite.ca | QC (581/418) | SEO local + Google Ads + Maps | Performance Foyer Signature, Plomberie JL Martin, O'Max Émondage |
+| 9 | **Agence Doorway** | agencedoorway.com | Montréal | Lead gen + SEO + SEA 100% rénovation | Modèle leads exclusifs/partagés, page Services dédiée |
+| 10 | **Propulsion360** | propulsion360.com | Laval | Expert GoHighLevel QC | Revend GHL white-label construction — infrastructure B2B2B déjà en place |
+| 11 | **Optimedia** | optimedia.ca | QC | Meta Ads + pré-qualification IA construction | ⚠️ **Concurrent potentiel — valider incognito AVANT d'approcher** |
+
+### 16.2 Tier B (2e vague — 3 agences)
+
+| # | Agence | URL | Note |
+|---|---|---|---|
+| 12 | **Bonzai Marketing** | bonzaimarketing.ca | Rive-Nord, packages ~950 $/mois, ACV faible |
+| 13 | **Robuste** | robuste.ca | SEO local, témoignages rénos nommés |
+| 14 | **SiteWebConstruction** (Vestibule Web) | sitewebconstruction.ca | Boutique 1-5 personnes |
+
+### 16.3 Tier C (long shot — 3 agences)
+
+- **CyberPerformance** (Lévis) — généraliste PME, pas focus réno clair
+- **Pacifique Marketing** (Magog) — Estrie, sert PME locales
+- **MontrealCIE / Construction Business Center** (Dargis) — niche spécialisée QC construction
+
+### 16.4 Les 3 TOP à contacter EN PREMIER
+
+#### #1 — Webici (Elisabeth, CEO — Québec)
+
+> **Objet :** 100 leads/90j chez Concept Réno Prestige — qui les appelle en <60 s ?
+>
+> Elisabeth,
+>
+> Bravo pour Concept Rénovation Prestige — triplé en 6 mois, c'est massif.
+>
+> Question brute : quand vous livrez 100 leads à un réno RBQ, combien sont rappelés dans les 5 premières minutes ?
+>
+> J'ai bâti "Alex" — un agent IA qui qualifie par SMS les leads rénos QC en <60 sec, 24/7, en français. Idéal pour empiler sur votre Formule TNT Niveau 2.
+>
+> Modèle : white-label, votre marque, 30-40% commission récurrente.
+>
+> 15 min cette semaine pour que je te montre un lead qualifié en live ?
+>
+> [prénom]
+
+#### #2 — Agence Doorway (Montréal)
+
+> **Objet :** Vos clients rénos disent "trop de leads, pas le temps" — solution ?
+>
+> Équipe Doorway,
+>
+> Vous vendez des leads rénovation depuis 20 ans. Votre client type vous dit quoi à 19h un jeudi ? *"J'ai 12 leads non rappelés, j'ai pas pu…"*
+>
+> "Alex" qualifie ces leads par SMS en <60 s (FR-QC, 24/7), book le RDV, pousse dans le CRM. Vos rénos ferment plus. Vous facturez la couche.
+>
+> White-label, votre marque, 30-40% récurrent. Zéro friction d'intégration : je connecte à votre livraison de leads existante.
+>
+> Démo 15 min ?
+>
+> [prénom]
+
+#### #3 — Propulsion360 (Laval, expert GoHighLevel)
+
+> **Objet :** GHL + AI SDR français-QC pour vos clients construction
+>
+> Salut Propulsion360,
+>
+> Vous faites du GHL white-label pour service businesses QC — secteur construction inclus. Vous avez donc le problème : GHL Conversation AI est en anglais et mal tuned pour les rénos RBQ.
+>
+> J'ai bâti Alex : AI SDR français-QC qui qualifie les leads rénos par SMS en <60 s, plugué à GHL en webhook. Testé sur leads Renoassistance/Soumission.ca.
+>
+> Vous le revendez dans vos SaaS plans. 30-40% récurrent.
+>
+> Appel 15 min cette semaine ? Je vous montre un sub-account exemple.
+>
+> [prénom]
+
+### 16.5 Méta-analyse du marché agences QC rénos
+
+1. **Marché mature mais fragmenté.** Aucune agence ne domine — toutes ont 30-300 clients construction.
+2. **L'offre est monolithique : "leads in, c'est à vous".** Aucune agence ne vend la couche de qualification/conversion post-lead. **C'est le trou dans lequel Alex s'insère.**
+3. **Signaux de timing forts :** Optimedia éduque déjà ("pré-qualification IA"), Webici a son CRM IA (Plannit), Propulsion360 revend GHL en white-label. Infrastructure B2B2B existe.
+4. **Commission 30-40% récurrente** acceptable pour agences GHL (Propulsion360 vit de ce modèle). **Moins** pour BOLÉAN/PH+C qui facturent en services → leur proposer **wholesale + markup** plutôt que revshare.
+
+**Risques à monitorer :**
+- **Optimedia** = concurrent potentiel. Valider incognito comme "rénovateur intéressé" avant de les approcher.
+- **Vilain Renard** (vilainrenardai.com) vend déjà Self-Selling Funnel 997 $/mois + Omni-Channel Receptionist 299 $/mois au QC. Concurrent couche IA, pas verticale rénovation.
+- **PH+C Digital / Groupe PH** (30+ experts) peut bâtir AI SDR in-house. Fenêtre 12-18 mois.
+
+**Prix observés aux rénos QC (benchmarks wholesale) :**
+- Bofu : 1 500 $/mois par funnel
+- Bonzai : package 950 $/mois (Google + FB + Google Business + site)
+- Émérite / Delisoft / Robuste : 800-2 500 $/mois
+- Optimedia : modèle exclusif de zone (estimé 1 500-3 500 $/mois)
+
+**Pricing wholesale Alex suggéré : 150-250 $/mois/réno + 30-40% commission** sur ACV total. Se glisse dans les stacks existants sans cannibaliser.
+
+### 16.6 Plan d'approche 2 semaines si tu choisis Pivot B
+
+| Jour | Action |
+|---|---|
+| J+1 (mer 24 avr) | Valider Optimedia incognito — SMS comme "réno qui cherche pré-qualification IA", récupérer leur pitch exact |
+| J+2 | Finaliser LinkedIn check des 3 TOP (Webici, Doorway, Propulsion360) — nom CEO, contexte récent |
+| J+3 (ven 25 avr) | Envoi des 3 cold emails TOP |
+| J+4-5 | Envoi 8 autres cold emails Tier A |
+| J+8-10 | Relances + calls pour les 3 TOP |
+| J+12-14 | **1er accord de principe pour pilote white-label** avec 1 agence |
+
+### 16.7 Caveat recherche
+
+- 17 agences vérifiées, pas 20 — plusieurs "candidats" écartés (France, Toronto, Edmonton, pas vraiment rénos).
+- Tailles d'équipes estimées via sites web + LinkedIn partiels — vérifier avant chaque approche.
+- Avant d'envoyer un cold email, faire 10 min de check LinkedIn du CEO + dernière actualité.
+- Risque Optimedia à valider EN PREMIER : si leur "pré-qual IA" = vrai AI SDR SMS, pivoter le positionnement.
+
+### 16.8 Sources agences
+
+- Webici : https://webici.ca/
+- Web Booster 360 : https://webbooster360.ca/
+- BOLÉAN : https://bolean.com/marketing-construction/
+- PH+C Digital : https://phcdigital.ca/
+- Bofu : https://bofu.ca/en/pages/marketing-pour-entreprises-de-la-construction
+- Delisoft : https://delisoft.ca/expertise/marketing-construction/
+- Bonzai Marketing : https://bonzaimarketing.ca/marketing-construction/
+- Bridge Media : https://bridgemedia.ca/en/
+- Robuste : https://www.robuste.ca/
+- Agence Émérite : https://emerite.ca/marketing-renovation-construction-performance-foyer-signature/
+- Agence Doorway : https://agencedoorway.com/
+- Propulsion360 : https://propulsion360.com/en/gohighlevel-experts-in-quebec/
+- Optimedia : https://www.optimedia.ca/
+- Vilain Renard (concurrent à surveiller) : https://vilainrenardai.com/
+- Semrush top agences construction MTL 2026 : https://agencies.semrush.com/list/construction-renovation/montreal/
+- Étude Bang Marketing B2B QC 2026 : https://www.bang-marketing.com/etat-du-marketing-b2b-au-quebec-en-2026-ce-que-revele-notre-etude-exclusive/
