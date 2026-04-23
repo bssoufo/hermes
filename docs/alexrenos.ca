@@ -1,0 +1,302 @@
+# Plan de match — `alexrenos.ca`
+
+**Produit :** Alex, représentant aux estimations — employé numérique qui qualifie les leads Renoassistance/Soumission.ca en SMS <60 sec et book l'estimation sur le calendrier du boss.
+**Cible :** entrepreneurs en rénovation résidentielle RBQ 3-15 employés, grand Montréal / Québec / Laval / Rive-Sud / Estrie.
+**Prix :** 2 500 $ setup + 1 290 $/mois.
+**Objectif :** 2-3 contrats signés d'ici le 22 mai 2026.
+**Date de création :** 22 avril 2026.
+
+---
+
+## 1. Réponse aux 5 questions stratégiques
+
+| Q | Verdict | Pourquoi |
+|---|---|---|
+| **Site internet ?** | **OUI — single-persona/single-vertical : `alexrenos.ca`** (pas un site générique "Employés Numériques"). Framer, 1 landing, 4h de build. | Un rénovateur qui atterrit sur un site parapluie "on fait aussi notaires et assurance" se dit *"ils connaissent rien à mon métier"*. Le générique viendra en Phase 2 avec 3 personas. |
+| **Facebook/TikTok publications ?** | **NON, pas maintenant.** TikTok = zéro ROI (rénovateurs 40-55 ans pas là pour affaires). LinkedIn = 15-25% pénétration, perte de temps. FB groupes = OUI, **mais après client #1**. | Avant case study chiffrée, tu postes dans le vide. Après client #1, les posts "JF a reçu 18 leads, Alex a qualifié 14 en <3 min" font le travail. |
+| **POC calendrier + SMS ?** | **OUI — arme #1.** Mix : sandbox sur landing + démo perso livrée en 48h après discovery + pilote 1$ en carte finale. Pas de "Loom générique" en front. | La sandbox fait booker le call. Le POC personnalisé avec son logo/RBQ rejouant SON vieux lead = le closer. Le pilote 1$ débloque les indécis coincés à J+7. |
+| **Cold emailing ?** | **OUI — pilier central (85% du temps Phase 1)**, couplé à cold call direct (les rénos répondent au téléphone, contrairement aux notaires). | Ratio ROI cold outbound vs social = 8-10× en phase 0-client. Liste via registre RBQ public + membres APCHQ région MTL/QC/Laval. |
+| **Concurrence saturée ?** | **NON — gap MAJEUR confirmé.** Personne ne cible FR-QC authentique. Renoassistance et Soumission.ca N'ONT PAS d'auto-répondeur IA natif. GHL Conversation AI n'a pas d'accent québécois. **Fenêtre 6-9 mois** avant que les gros bougent. | Agences "IA" QC (Entrepreneurs Augmentés, CyberPerformance, Carange, Nexxo, Limova) = généralistes. SaaS verticalisés (JobTread, Buildertrend, JobNimbus, Buildxact, ServiceTitan, Jobber) = tous anglophones natifs, USD, aucune localisation FR-QC réelle. |
+
+---
+
+## 2. Les 5 décisions non-négociables
+
+1. **Feature freeze d'Alex jusqu'à 3 000 $ MRR.** Aucune ligne de code qui ne vient pas du feedback d'un client *payant*. Si tu te prends à "optimiser le prompt une 4e fois" alors que ton Calendly a <3 slots réservés cette semaine, tu es dans la "POC-polish paralysis" — l'échec classique du dev qui se cache dans le code pour éviter l'appel froid.
+
+2. **Prix affiché sur la landing** : `1 290 $/mois + 2 500 $ setup`. Les rénovateurs détestent les devis opaques. Afficher filtre les non-qualifiés, positionne "comme un salaire", crédibilise.
+
+3. **Bedrock Canada aujourd'hui, pas demain.** Si tu écris "Hébergé au Canada" sur la landing sans que ce soit vrai = poursuite Loi 25 potentielle. 20 min de setup.
+
+4. **Exclusivité territoriale par contrat** : 1 seul rénovateur par sous-catégorie RBQ × région (ex : cuisines Laval). Crée la rareté, défend le prix, lock-in le client.
+
+5. **Clause "case study après 60 jours"** dans le contrat initial (droit d'usage logo + métriques anonymisées, veto 7 jours). Offre 1 mois gratuit au premier qui accepte d'être nommé — tu achètes ton premier social proof pour 1 290 $.
+
+---
+
+## 3. Plan de match 30 jours (22 avril → 22 mai 2026)
+
+### Semaine 1 (22-28 avril) — Foundation
+
+| Jour | Actions (bloquer 6h/jour max) |
+|---|---|
+| **Mar 22** | Achat domaine `alexrenos.ca` (.ca obligatoire — .com sonne US, .quebec sonne gouv). Framer template FR. Draft copy landing. Fork skill SDR → skill Alex (persona + 6 questions de qualif). |
+| **Mer 23** | Landing en ligne (copy complet, Calendly intégré, Plausible analytics). Bedrock Canada configuré. NEQ + mentions Loi 25 + politique confidentialité (iubenda ~60 $). |
+| **Jeu 24** | Parseur email (n8n) pour Renoassistance + Soumission.ca. Webhook vers Hermes. Test end-to-end avec ton propre numéro comme lead fictif. |
+| **Ven 25** | **Enregistre le Loom 90 sec** (screen-record SMS + split-screen calendrier qui se remplit). Un seul essai, pas 20 prises. Publie. |
+| **Sam-Dim** | Liste 80 entrepreneurs RBQ 3-15 employés (registre RBQ public + APCHQ membres région MTL/QC/Laval). Personnalisation light : nom + ville. |
+
+**Milestone S1 :** landing live + Alex v1 démo-ready + liste 80 prospects.
+
+### Semaine 2 (29 avril - 5 mai) — Outbound machine
+
+- Lundi à vendredi : 20 cold courriels/jour + 5 appels directs à chaud (les rénos répondent entre 11h30-13h et après 16h)
+- Chaque courriel inclut le lien Loom 90 sec + lien Calendly
+- Cible : 8 discovery calls 15 min pour la semaine 3
+- **1 post FB unique** dans *Entrepreneurs et travailleurs de la construction du Québec* (50k+ membres), format "build in public" : *"Je code un outil qui qualifie les leads Renoassistance en SMS <60 sec. 3 slots de test à prix réduit pour entrepreneurs de Montréal. DM."* — **pas de lien** (FB les cache), force les DM.
+
+**Milestone S2 :** 8 discovery calls bookés, 2-4 démos livrées en fin de semaine.
+
+### Semaine 3 (6-12 mai) — Démos et POC personnalisés
+
+- Démos Zoom 15 min (structure minute-par-minute en section 5)
+- Livre 3-4 POC personnalisés (48h après la démo) : Alex brandé avec leur logo + RBQ, rejoue UN de leurs vrais anciens leads — c'est ton closer #1
+- Relances J+3 et J+7
+
+**Milestone S3 :** 1-2 contrats signés + 2-3 propositions en pipeline.
+
+### Semaine 4 (13-22 mai) — Closing + case study setup
+
+- Deadline aux indécis (*"je ferme mes slots de config vendredi 17h"*)
+- Carte finale "pilote 1 $ / 30 jours" pour les coincés
+- Onboarding clients signés
+- Demande témoignage vidéo aux clients #1-#2 après 2 semaines d'usage — carburant Phase 2 sociale
+
+**Milestone S4 :** 2-3 contrats signés total, ~18 000 $ ARR pipeline réel.
+
+---
+
+## 4. Cold courriel — template prêt à envoyer
+
+> **Objet :** Marc — leads Renoassistance pas rappelés à temps ?
+>
+> Bonjour M. Tremblay,
+>
+> Je suis [prénom], de [ville]. Je viens de bâtir **Alex** — un employé numérique qui texte vos leads Renoassistance/Soumission.ca en moins de 60 secondes et qualifie les sérieux avant qu'ils appellent votre compétiteur.
+>
+> Démo 90 secondes : [lien Loom]
+>
+> 15 min Zoom cette semaine pour regarder vos 3 derniers leads ensemble et vous montrer ce qu'Alex aurait fait ? [lien Calendly]
+>
+> Salaire d'Alex : 1 290 $/mois. Moins qu'un stagiaire, travaille 24/7.
+>
+> Merci,
+> [prénom]
+
+---
+
+## 5. Structure démo Zoom 15 min (minute par minute)
+
+- **0-2 min** — Questions ROI : *"Combien de leads Renoassistance/mois ? Combien rappelés <10 min ? Ticket moyen ? Marge ?"* Notes à l'écran dans Google Sheet partagé `ROI_[NomClient].xlsx`.
+- **2-4 min** — Amplification douleur : *"Donc 14 leads perdus le mois passé."*
+- **4-9 min** — **Alex EN DIRECT** (pas de slides). Déclenche un lead-test dans GHL, SMS arrive sur TON cell, Alex qualifie en 90 sec. Dis : *"Ça c'était pendant que tu soumissionnais un autre client."*
+- **9-12 min** — Calcul ROI en direct dans Google Sheet partagé. Cellule jaune géante `= 5 600 $/mois perdus`.
+  - Formule : *"23 leads, 60% pas rappelés à temps = 14 perdus. De ces 14, 20% auraient signé = 2,8 contrats. Ticket 8 000 $ × marge 25% = 2 000 $/contrat. **5 600 $/mois**. Alex coûte 1 290 $. Tu récupères 4 300 $ net."*
+- **12-14 min** — ASK de signature : *"Marc, deux options. Option 1 : je te branche cette semaine, 1 290 $/mois. Option 2 : pilote 30 jours à 1 $. Laquelle te parle ?"*
+- **14-15 min** — Friction remover : *"DocuSign aujourd'hui, config demain, Alex parle à tes leads vendredi."*
+
+**Hook clé à min 7 :** *"Tu veux que je lui envoie ton VRAI numéro d'estimateur pour qu'Alex transfère l'appel ?"* — démontre le handoff humain, souvent ce qui déverrouille le "oui".
+
+---
+
+## 6. Suivi post-démo — templates J+0 / J+1 / J+3 / J+7
+
+### J+0 (2h après démo) — ROI + POC en config
+
+> **Objet :** Marc, 5 600 $/mois — ta fiche + ton Alex en config
+>
+> Salut Marc, tel que promis : (1) ta fiche ROI en PJ, (2) je configure ton Alex personnalisé avec ton logo + RBQ, prêt mercredi 16h. Envoie-moi 1 ancien lead Renoassistance (screenshot SMS OK) que je le rejoue dedans. Pour réserver ton slot de lancement : [lien Calendly vendredi]. — [prénom]
+
+### J+1 — livraison POC personnalisé
+
+> **Objet :** Ton Alex est vivant — teste-le (numéro ci-dessous)
+>
+> Marc, texte "Bonjour" au 581-xxx-xxxx, c'est Alex branché sur Rénovations Tremblay. J'ai rejoué ton lead de Mme Lapointe (cuisine, St-Bruno). Dis-moi ce que t'en penses avant vendredi 17h — après je le débranche, c'est une démo.
+
+### J+3 — pression sociale
+
+> **Objet :** J'ai 2 slots de config en mai, 1 est pour toi ?
+>
+> Marc, j'ouvre mai à 4 entrepreneurs RBQ max (capacité de config solo). Il m'en reste 2. Si c'est pas le bon timing, zéro souci, dis-le moi que je libère le slot.
+
+### J+7 — carte finale (pilote 1 $)
+
+> **Objet :** Dernière option avant que je ferme le dossier
+>
+> Marc, on fait simple : 1 $ pour 30 jours, tes vrais leads, tu vois les chiffres. Si ça marche pas t'annules, aucune question. Deal ?
+
+**Deadline :** toujours un vendredi 17h nommé. Pression par rareté réelle (slots de config), pas par FOMO fake.
+
+---
+
+## 7. Wireframe landing `alexrenos.ca` — copy FR-QC prêt à coller
+
+### Hero
+- **Titre :** *Alex répond à vos leads Renoassistance en moins de 60 secondes. Même à 21h le samedi.*
+- **Sous-titre :** *Alex, c'est pas un chatbot. C'est votre représentant aux estimations — un employé numérique qui qualifie par SMS, filtre les pas-sérieux, pis booke l'estimation direct dans votre calendrier. Salaire : 1 290 $/mois.*
+- **CTA principal :** `Voir Alex en action (2 min)` · **CTA secondaire :** `Jaser 15 min avec le fondateur`
+
+### Section problème
+- **Titre :** *78 % de vos leads Renoassistance appellent 3 entrepreneurs. Le premier qui répond ferme l'estimation.*
+- **Corps :** *Renoassistance pis Soumission.ca vous chargent 40 à 120 $ par lead. Pis vous êtes sur le chantier, les mains dans le gypse, quand le lead rentre à 14h07. Vous rappelez à 17h30. Trop tard — le gars a déjà booké avec Construction Tremblay. Vous venez de brûler 80 $ pour rien.*
+
+### Section solution — Alex fait quoi concrètement
+- **Texte le lead en moins de 60 sec** dès que Renoassistance vous l'envoie par courriel
+- **Qualifie par SMS** : budget, type de projet (cuisine, salle de bain, sous-sol), échéancier, propriétaire ou locataire, code postal (zone desservie ?)
+- **Élimine les tire-pneus** — si le gars veut "juste une estimation pour négocier avec son beau-frère", Alex le détecte pis vous perdez pas votre samedi
+- **Booke l'estimation** direct dans votre Google Calendar ou GoHighLevel — vous recevez juste la notif avec le résumé qualifié
+
+### Démo
+Vidéo Loom 90 secondes : screen-record d'un vrai échange SMS (numéro de test), split-screen avec le calendrier qui se remplit.
+**Pas de sandbox interactif pour v1** — ça coûte 3 jours à builder et les prospects cliquent pas. Un Loom bien monté convertit mieux qu'une démo interactive buggy.
+
+### Preuve sociale (0 client — fake-it-till-you-make-it sans mentir)
+**Section "Construit sur une stack utilisée par" :**
+- Logo Nous Research (Hermes Agent — vrai)
+- Logo GoHighLevel (MCP intégré — vrai)
+- *"Conçu au Québec par [Ton Nom], ex-[ton vrai background tech]"*
+
+**PAS de faux logos clients.** À la place :
+> *"Alex est en déploiement pilote avec 2 entrepreneurs RBQ du Grand Montréal en avril 2026. Places limitées pour le 3e pilote à prix réduit (1 500 $ setup au lieu de 2 500 $)."*
+
+### Prix — AFFICHÉ
+> **Salaire d'Alex : 1 290 $/mois** — moins qu'un stagiaire, travaille 24/7, prend pas de vacances.
+> **Embauche (setup) : 2 500 $** — configuration, entraînement sur votre zone, intégration Renoassistance/GoHighLevel, 2 semaines de rodage.
+> *Premier mois satisfait ou remboursé. Engagement 6 mois après ça.*
+
+### FAQ
+
+**« C'est-tu un chatbot comme ceux qui me gossent sur les sites ? »**
+Non. Alex tient une vraie conversation SMS, comprend quand le lead dit *"j'ai 15 000 piastres à peu près"* pis sait que c'est pas une cuisine complète. Il vous appelle avant de booker si le projet sort du standard.
+
+**« Les clients vont-tu capoter de se faire texter par un robot ? »**
+Alex se présente comme votre représentant aux estimations. On a testé — les prospects Renoassistance s'en crissent, ils veulent juste un rendez-vous rapide. Vous restez le visage humain sur le chantier.
+
+**« Mes données, mes leads — ça va où ? »**
+Hébergé sur infra Canadienne. Conforme Loi 25. Vous restez propriétaire de toutes les conversations, exportables en tout temps.
+
+**« J'ai pas de CRM, ça marche quand même ? »**
+Oui. On vous installe GoHighLevel (inclus dans le setup) ou on branche sur votre Google Calendar si vous préférez rester simple.
+
+**« Pis si Alex fait une gaffe ? »**
+Toute conversation "hors script" vous est escaladée par SMS en temps réel. Vous reprenez la main en 1 tap.
+
+### CTA final
+**Réservez 15 min avec [Ton Prénom], le fondateur.** Pas de pitch de vente scripté — on regarde vos 3 derniers leads ensemble, pis je vous montre comment Alex les aurait traités.
+[Bouton Calendly]
+
+---
+
+## 8. Trust signals Québec
+
+- **NEQ affiché dans le footer** — trust signal énorme pour les entrepreneurs RBQ (ils ont eux-mêmes un NEQ). Légalement obligatoire pour pratiquer au QC.
+- **"Hébergé au Canada"** — seulement si c'est vrai. Bedrock Canada Central configuré avant le lancement. Non négociable.
+- **Liens légaux obligatoires :** Politique de confidentialité Loi 25 (avec nom du responsable = toi), Conditions d'utilisation, Mentions légales. iubenda ~60 $.
+- **Badge RBQ :** NON — t'en as pas pis t'en as pas besoin (t'es fournisseur, pas entrepreneur). Saute.
+- **Logos clients :** zéro logo sans contrat signé autorisant l'usage. Un rénovateur qui voit son logo sans permission te poursuit gratis.
+
+---
+
+## 9. Stack technique (lancer en <1 jour)
+
+- **Framer** — pas Webflow (trop lent à maîtriser), pas Next.js (tu vas coder 3 jours au lieu de closer). Framer = template FR + publish = 4h.
+- **Domaine :** `alexrenos.ca` (premier choix), `employe-alex.ca` (backup), `alex-estimations.ca` (backup 2). **.ca obligatoire.**
+- **Analytics :** Plausible (9 $/mois, conforme Loi 25 out-of-the-box, pas de bannière cookies requise).
+- **Calendly** (tier gratuit) ou **Cal.com** self-hosted.
+- **Coût mensuel total :** Framer 15 $ + Plausible 9 $ + domaine 1,25 $ + Calendly 0 $ = **~25 $/mois**.
+
+---
+
+## 10. Phase 2 — post-J+30, après clients #1-#2
+
+Bascule du ratio de temps :
+- **40% social + Meta Ads / 60% outbound**
+- Meta Ads **25-35 $/jour** ciblage géo (MTL+Laval+Rive-Sud+QC+Sherbrooke), âge 35-58, intérêts *APCHQ, RBQ, Renoassistance, CCQ, Sage 50, Acomba*
+- Format vainqueur : **Reels verticaux 15-30 sec** avec CTA DM (pas form)
+- 3 case studies 1 page (logo + 3 chiffres + 1 quote)
+- CAC attendu : **80-180 $ par lead qualifié** (démo bookée), pas par client
+- Groupes FB à publier 3x/sem :
+  - *Entrepreneurs et travailleurs de la construction du Québec* (50k+)
+  - *Entrepreneurs généraux Québec*
+  - *Rénovation Québec – entraide entre pros*
+  - *RBQ – Aide et questions*
+  - *APCHQ – Groupe membres* (si cotisation)
+  - *Soumissions Rénovation entre pros*
+- Skip : LinkedIn (pénétration 15-25% ce segment), TikTok (zéro B2B rénos QC), YouTube (ROI 12-18 mois).
+
+### 3 formats de post qui convertissent
+
+1. **Démo live Alex** (Reel 45 sec) — hook *"Mon employé virtuel vient de qualifier un lead pendant que je dormais. Regarde."* → screencast SMS défilant → face caméra avec stat Renoassistance → CTA *"Écris ALEX en commentaire."*
+
+2. **Contrarian** (texte FB long 180-250 mots) — hook *"Arrête de payer 1 200 $/lead à Renoassistance si tu rappelles après 4h."* → stat speed-to-lead → anecdote contracteur QC anonymisé → payoff → CTA commentaire (reach > vente).
+
+3. **Coulisses build-in-public** (Reel 30 sec) — hook *"Je code un employé virtuel pour un contracteur de Drummondville, en direct."* → timelapse écran Claude + SMS Twilio → overlay *"setup : 2 jours, pas 6 mois"* → CTA *"3 spots à 2 500 $ ce mois-ci. DM si intéressé."*
+
+---
+
+## 11. Menaces 12 mois (à monitorer)
+
+| Menace | Prob | Impact | Mitigation |
+|---|---|---|---|
+| Renoassistance lance auto-réponse IA native | Moyen (40%) | Fatal | Signer 20-30 entrepreneurs avant fin T3 2026. Lock-in par intégration profonde. |
+| GHL sort accent QC FR-CA natif | Faible (15%) | Élevé | Priorité US pour GHL, 18 mois+. Construire moat linguistique FR-QC documenté. |
+| Buildertrend/JobTread traduisent FR-QC + AI SDR | Faible (10%) | Moyen | Roadmap anglais-first, friction énorme. |
+| Agences US AI-SDR entrent au QC | Élevé (60%) | Moyen | Butent sur FR-QC + RBQ. Moat tient. |
+| OpenAI/Anthropic agent vocal plug-and-play | Élevé (70%) | Commoditise tout le monde | Devenir intégrateur + couche métier verticale. |
+
+### Moat défensif — 3 mesures actionnables MAINTENANT
+
+1. **Lock-in par intégration profonde** : connecteurs directs Renoassistance/Soumission.ca/monentrepreneur.ca + vérif RBQ auto + push vers CRM rénovateur (JobNimbus/Jobber). Migration coûteuse.
+2. **Moat linguistique FR-QC documenté** : librairie de 500+ termes chantier QC + prompts testés sur 50+ conversations réelles, versionné. Publier un benchmark public "Alex vs GHL FR" prouvant la supériorité FR-QC.
+3. **Exclusivité territoriale par entrepreneur + contrats 12 mois** : 1 seul rénovateur par sous-catégorie RBQ × région (ex : cuisines Laval). Rareté → prix défendable, churn bas, bloque la porte avant que Renoassistance ne lance son truc.
+
+---
+
+## 12. Piège principal — POC-polish paralysis
+
+**Dysfunction :** tu continues d'ajouter des features à Alex (parser Soumission.ca v2, gestion des doublons, dashboard temps réel, handoff vocal…) **parce que coder est confortable et vendre ne l'est pas.** Chaque feature repousse l'appel froid d'une semaine.
+
+**Signaux :**
+- Push de code Hermes mais 0 appel booké cette semaine
+- *"Je veux juste finir X avant de vendre"*
+- Refonte du prompt système pour la 4e fois
+- Calendly < 3 slots réservés dans les 14 prochains jours
+
+**Règle :** **feature freeze jusqu'à 3 000 $ MRR.** 70% du temps en prospection, 30% en config client. "Petites features" → backlog Notion, revue vendredi 16h seulement.
+
+**Test brutal lundi matin :** *"Combien d'appels discovery j'ai faits la semaine passée ?"* Si < 10, zéro ligne de code cette semaine. Tu vends.
+
+---
+
+## 13. Action UNIQUE à faire ce soir
+
+1. Achat domaine `alexrenos.ca`
+2. Bloquer vendredi 25 avril pour enregistrer le Loom 90 sec
+3. Si Loom vendredi soir → outbound démarre lundi 28
+
+Si pas de Loom vendredi, rien d'autre n'avance.
+
+---
+
+## 14. Références
+
+- Registre RBQ : `https://www.rbq.gouv.qc.ca/` (recherche de licence publique)
+- APCHQ régional Québec : `https://apchq.com/mon-association-regionale/quebec`
+- Portail APCHQ "Trouver un entrepreneur" : `https://trouverunentrepreneur.com/`
+- Renoassistance (comment ça marche — pas d'IA native confirmé avril 2026) : `https://www.renoassistance.ca/fr/residentiel/comment-ca-fonctionne/renoassistance-en-detail`
+- Soumission Rénovation (rappel humain confirmé avril 2026) : `https://soumissionrenovation.ca/fr/service/entrepreneurs-renovation`
+- GoHighLevel Voice AI (pas d'accent QC natif) : `https://help.gohighlevel.com/support/solutions/articles/155000004683-voice-ai-multi-language-support`
+- Commission d'accès à l'information QC (Loi 25) : `https://www.cai.gouv.qc.ca/`
+- iubenda (politique confidentialité) : `https://www.iubenda.com/`
+- Framer : `https://www.framer.com/`
+- Plausible Analytics : `https://plausible.io/`
