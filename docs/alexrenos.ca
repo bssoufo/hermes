@@ -492,3 +492,231 @@ Avant de construire, j'ai lancé 4 agents en mode adversarial (démolir, pas dé
 - Vilain Renard (concurrent à surveiller) : https://vilainrenardai.com/
 - Semrush top agences construction MTL 2026 : https://agencies.semrush.com/list/construction-renovation/montreal/
 - Étude Bang Marketing B2B QC 2026 : https://www.bang-marketing.com/etat-du-marketing-b2b-au-quebec-en-2026-ce-que-revele-notre-etude-exclusive/
+
+---
+
+## 17. Architecture technique V1 (23 avril 2026)
+
+Architecture tranchée pour le pivot B2B2B : **déploiement isolé par agence** (1 VM Elestio = 1 agence). Le plan complet est dans `.claude/plans/je-veux-que-tu-dreamy-jellyfish.md`. Ci-dessous la synthèse.
+
+### 17.1 Principe directeur
+
+**Une VM = une agence = un tenant.** Pas de table `tenants`, pas de `tenant_id` FK partout. Isolation au niveau VM, pas au niveau requête SQL. Même image Docker pour toutes les agences, seul `.env` varie. Le frontend charge son branding au runtime via `GET /api/v1/agency/settings`.
+
+**Pourquoi ce modèle** : argument Loi 25 fort pour la pitch ("votre infra, vos données, aucun mix avec d'autres agences"), zéro risque de fuite cross-tenant, white-label profond, facturation transparente (coût marginal ~€45-80/mo par agence, marge brute ~82% à 490 CAD/mo wholesale).
+
+### 17.2 Diagramme d'architecture (par VM / par agence)
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│          Elestio VM Hetzner Medium (1 VM = 1 agence)         │
+│                                                              │
+│  ┌───────────┐  ┌──────────────┐  ┌──────────────────┐       │
+│  │  Hermes   │  │ Dashboard    │  │  Dashboard       │       │
+│  │  Gateway  │  │ API          │◄─┤  Web (Vite/React)│       │
+│  │  (8642/   │  │ (FastAPI,    │  └──────────────────┘       │
+│  │   8644)   │  │  8001)       │                             │
+│  └─────┬─────┘  └──────┬───────┘                             │
+│        │ webhook       │ SQL                                 │
+│        │ alex-inbound  ▼                                     │
+│        │         ┌──────────────┐                            │
+│        │         │ Postgres 16  │                            │
+│        └────────►│ alex_db      │                            │
+│   via MCP        └──────────────┘                            │
+│   alex-events                                                │
+│                                                              │
+│  ┌──────────────────── nginx (8880) ───────────────────┐     │
+│  │ dashboard.<slug>.alexrenos.ca → dashboard-web       │     │
+│  │ api.<slug>.alexrenos.ca       → dashboard-api       │     │
+│  │ hermes.<slug>.alexrenos.ca    → hermes (v1/webhooks)│     │
+│  └─────────────────────────────────────────────────────┘     │
+└──────────────────────────────────────────────────────────────┘
+         ▲                           ▲
+         │ HTTPS (Elestio LE)        │ SMTP2GO inbound webhook
+         │                           │ POSTs MIME de Renoassistance
+    Users agence              leads+<client_slug>@<agency-domain>
+    (login dashboard)
+```
+
+### 17.3 Stack technique
+
+- **Backend** : Python 3.12 + FastAPI 0.115+ + SQLAlchemy 2.x async + asyncpg + Alembic + Pydantic 2.10 + python-jose (JWT) + passlib (bcrypt) + structlog + slowapi
+- **Frontend** : Vite 6 + React 19 + TanStack Router (file-based) + TanStack Query + shadcn/ui + Tailwind v4 + axios + zod + date-fns + lucide-react
+- **DB** : Postgres 16-alpine (isolée par VM)
+- **LLM** : Claude Sonnet 4.6 via OpenRouter (à basculer vers AWS Bedrock Canada en Phase 2)
+- **SMS** : GoHighLevel → Twilio (via MCP)
+- **Inbound email** : SMTP2GO inbound routes (déjà utilisé côté outbound par l'opérateur)
+- **Images** : GHCR (`ghcr.io/bssoufo/alex-dashboard-{api,web,events-mcp}:<semver>`)
+
+### 17.4 Repo layout (monorepo dans bssoufo/hermes)
+
+```
+bssoufo/hermes
+├── docker-compose.yml                  # +5 services (dashboard-db/migrate/api/web + alex-events-mcp)
+├── .env.example                        # +20 vars AGENCY_*, DOMAIN_*, DASHBOARD_*
+├── storage/hermes/
+│   ├── config.yaml                     # +route alex-inbound, +MCP alex-events
+│   └── skills/
+│       ├── sdr/SKILL.md                # existant
+│       └── alex/SKILL.md               # NEW — fork SDR, 6 questions rénovation
+├── apps/                               # NEW
+│   ├── dashboard-api/                  # FastAPI + Alembic
+│   ├── dashboard-web/                  # Vite + React 19 + shadcn
+│   └── alex-events-mcp/                # MCP sidecar (Hermes → dashboard-api)
+├── nginx/
+│   └── default.conf.template           # envsubst au boot (DOMAIN_* + AGENCY_SLUG)
+└── scripts/
+    ├── smoke-test-alex.sh              # NEW — E2E test
+    └── provision-agency.py             # NEW — pour agences 3+
+```
+
+### 17.5 Data model Postgres (MVP 7 jours)
+
+Tables principales :
+
+- **`agency_settings`** (singleton via CHECK id=1) — nom, slug, brand (logo, couleur), locale, timezone, quiet hours TCPA
+- **`clients`** — rénovateurs gérés par l'agence (business_name, slug pour email routing, RBQ, city, GHL location/calendar IDs, status)
+- **`lead_sources`** — enum table ('renoassistance', 'soumission_ca', 'direct')
+- **`leads`** — chaque lead ingesté (prospect info, reno_type, budget_bracket, timeline, qualification_status, first_response_seconds, raw_payload JSONB, UNIQUE(source, source_external_id))
+- **`conversations`** — append-only SMS exchanges (lead_id, direction inbound/outbound, body, GHL message ID)
+
+Post-MVP : `users` (multi-rôles), `metrics_daily` (pré-agrégé), `events` (audit log), `feature_flags`.
+
+### 17.6 Pipeline ingestion leads (SMTP2GO inbound)
+
+```
+[Renoassistance → client rénovateur]
+  │ (n'importe quel provider email)
+  ▼
+[Règle forward Gmail/Outlook du rénovateur]
+  │ redirige vers leads+<client_slug>@<agency_domain>
+  ▼
+[SMTP2GO inbound route]
+  │ POST webhook MIME à https://api.<slug>.alexrenos.ca/internal/leads/ingest
+  │ (HMAC SMTP2GO)
+  ▼
+[FastAPI: /internal/leads/ingest]
+  1. vérif HMAC + internal secret
+  2. parse MIME → LeadDraft
+  3. UPSERT leads (idempotent)
+  4. POST hermes:8644/webhooks/alex-inbound + HMAC
+  ▼
+[Hermes skill alex]
+  1. MCP GHL: lit contexte contact/conversation
+  2. applique quiet hours + langue + TCPA
+  3. génère SMS FR-QC 160 chars
+  4. envoie via ghl.conversations_send-a-new-message
+  5. MCP alex-events: events_record(kind='message.sent', lead_id, body)
+  ▼
+[alex-events-mcp sidecar]
+  POST https://api.<slug>.alexrenos.ca/internal/events + HMAC
+  ▼
+[FastAPI: /internal/events]
+  INSERT conversations + UPDATE leads.qualification_status
+  ▼
+[Dashboard frontend]
+  TanStack Query poll /clients/{id}/leads toutes les 15s
+```
+
+**Note onboarding agence** : le rénovateur n'a pas besoin de changer son provider courriel. Il crée juste une règle de forward dans Gmail/Outlook. Zéro friction.
+
+### 17.7 Skill Alex — fork de SDR
+
+Fichier : `storage/hermes/skills/alex/SKILL.md` (fork de `storage/hermes/skills/sdr/SKILL.md`, ~80% réutilisable).
+
+**Conservé** : modes SHADOW/LIVE, quiet hours TCPA, STOP keyword, détection FR/EN, tag state machine, flow procédural, handoff humain.
+
+**Adapté** :
+- Persona : `agent_name=Alex`, `brand={agency_name}` via prompt webhook
+- **6 questions de qualification rénovation** (regroupées en 2-3 SMS) :
+  1. Type de projet (cuisine/salle de bain/sous-sol/toiture/agrandissement)
+  2. Budget (ordre de grandeur)
+  3. Échéancier (ASAP / 1-3 mois / exploration)
+  4. Propriétaire ou locataire
+  5. Permis municipal requis
+  6. Décideur seul ou couple
+- Booking via `ghl.calendars_create-appointment`
+- Émission event après chaque action via MCP `alex-events.events_record`
+
+### 17.8 Backend API — 14 endpoints MVP
+
+- **Auth** : `POST /api/v1/auth/login`, `/logout`, `GET /auth/me`
+- **Agency** : `GET /api/v1/agency/settings` (public pour branding boot)
+- **Clients** : `GET/POST /clients`, `GET/PATCH /clients/{id}`, `GET /clients/{id}/leads`
+- **Leads** : `GET /leads/{id}` (avec conversations embedded)
+- **Internal** (HMAC shared-secret) : `POST /internal/leads/ingest`, `POST /internal/events`
+- **Health** : `GET /healthz`, `GET /readyz`
+
+**Sécurité non-négociable** :
+- JWT httpOnly + Secure + SameSite=Strict cookie
+- bcrypt cost 12
+- HMAC + timestamp (drift <300s) sur `/internal/*`
+- Nginx deny public sur `/internal/`
+- CORS locked sur `DOMAIN_DASHBOARD` uniquement
+- Rate limit `/auth/login` (5/min par IP, 10/h par email)
+- Logs JSON avec strip PII (phone/email/body)
+
+**Bootstrap admin MVP** : env vars `ADMIN_EMAIL` + `ADMIN_PASSWORD_HASH` (bcrypt pré-calculé). Migration vers table `users` en post-MVP.
+
+### 17.9 Frontend — 3 vues MVP
+
+Routes TanStack Router (file-based) :
+- `login.tsx` (public)
+- `_auth/app.tsx` — home agence (liste rénovateurs + métriques)
+- `_auth/clients.$id.tsx` — drill-down rénovateur
+- `_auth/leads.$leadId.tsx` — détail lead + conversations
+
+**Runtime branding** : au boot, `__root.tsx` fetch `/api/v1/agency/settings` et applique CSS vars (`--color-primary`, logo URL, `document.title`). **Aucun rebuild par agence.** Changement de branding = un `PATCH` DB.
+
+Tailwind v4 : `@import "tailwindcss"; @theme { --color-primary: ...; }` en CSS, plus de `tailwind.config.js`.
+
+### 17.10 DNS & SSL per-agency
+
+Par agence, 3 CNAMEs dans Cloudflare (zone `alexrenos.ca`) :
+- `dashboard.<slug>` → `<elestio-vm>.vm.elestio.app`
+- `api.<slug>` → idem
+- `hermes.<slug>` → idem
+
+Elestio gère Let's Encrypt automatique pour les 3 sous-domaines.
+
+Custom agency domains (ex: `alex.webici.ca`) : reporté post-MVP.
+
+### 17.11 Provisioning — MVP manuel, script au #3
+
+**Agences 1-2 : manuel** (learn pain points) :
+1. Dupliquer projet Elestio depuis template
+2. Générer secrets (`openssl rand -hex 32` × 3, `rand -hex 64` pour JWT, `rand -base64 48` pour DB password)
+3. Remplir `.env` dans Elestio dashboard
+4. Set reverse-proxy target port 8880
+5. Cloudflare CNAMEs (3)
+6. Elestio Domain Management (3 domaines + LE)
+7. SMTP2GO inbound route
+8. Seed `agency_settings` via psql (SSH tunnel)
+
+**Agences 3+** : `scripts/provision-agency.py` automatise 1-7 via Elestio API + Cloudflare API. Cible : <20 min end-to-end.
+
+### 17.12 Monitoring & backups MVP
+
+- **Health** : `/healthz` probé par Better Stack (free tier 50 endpoints)
+- **Logs** : structlog JSON stdout → Elestio capture + Axiom (25$/mo à partir agence #5)
+- **Backups** : `pg_dump | gzip | rclone b2:` nightly cron, retention 14j + Elestio Borg fallback
+- **Alerts** : Better Stack email/SMS si health down >2 min
+- **Post-MVP** : Sentry, Grafana Cloud metrics scrape
+
+### 17.13 Scope hors MVP 7 jours
+
+- Table `users` multi-rôles (→ ADMIN_EMAIL env)
+- Table `metrics_daily` pré-agrégée (→ calculs on-the-fly)
+- Table `events` audit log (→ uniquement buffer ingestion)
+- Settings UI PATCH (→ édition via psql)
+- Refresh tokens (→ JWT 12h single-shot)
+- Sentry (→ à ajouter avant 1er paiement)
+- Script provision automatisé (→ manuel pour #1-2)
+- Custom domains agences
+- Feature flags par agence
+
+### 17.14 Références
+
+Plan d'implémentation détaillé : `.claude/plans/je-veux-que-tu-dreamy-jellyfish.md`
+Skill SDR existante réutilisable à 80% : `storage/hermes/skills/sdr/SKILL.md`
+SMTP2GO inbound docs : https://support.smtp2go.com/hc/en-gb/articles/8718127516569
